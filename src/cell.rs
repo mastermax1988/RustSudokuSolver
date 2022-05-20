@@ -1,27 +1,27 @@
 #[derive(Debug, Copy, Clone)]
-struct Cell {
+pub struct Cell {
     value: u8,
     possible_values: [u8; 9],
 }
 
 
 impl Cell {
-    fn new() -> Cell {
+    pub fn new() -> Cell {
         let value = 0;
         let possible_values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
         Cell { value, possible_values }
     }
 
-    fn value(&self) -> &u8{
+    pub fn value(&self) -> &u8 {
         &self.value
     }
 
-    fn possible_values(&self) -> &[u8;9]{
+    pub fn possible_values(&self) -> &[u8; 9] {
         &self.possible_values
     }
 
-    fn set_value(&mut self, value: u8) {
+    pub fn set_value(&mut self, value: u8) {
         self.value = value;
         for i in 0..9 {
             if i + 1 == value {
@@ -32,8 +32,20 @@ impl Cell {
         }
     }
 
-    fn remove_possible_value(&mut self, value: u8) {
-        let pos: usize = (value - 1) as usize;
-        self.possible_values[pos] = 0;
+    pub fn remove_possible_value(&mut self, value: u8) {
+        if self.value != value {
+            let pos: usize = (value - 1) as usize;
+            self.possible_values[pos] = 0;
+        }
+    }
+
+    pub fn get_possible_values_count(&self) -> u8 {
+        let mut ret = 0;
+        for i in 0..9 {
+            if self.possible_values[i] > 0 {
+                ret += 1;
+            }
+        }
+        ret
     }
 }
