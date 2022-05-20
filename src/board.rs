@@ -1,6 +1,6 @@
 use crate::cell::Cell;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Board {
     cells: [[Cell; 9]; 9],
 }
@@ -10,27 +10,55 @@ impl Board {
         let mut cells = [[Cell::new(); 9]; 9];
 
         let mut b = Board { cells };
-        b.set_cell_value(0, 3, 5);
-        b.set_cell_value(0, 6, 3);
-        b.set_cell_value(1, 2, 2);
-        b.set_cell_value(1, 3, 8);
-        b.set_cell_value(2, 2, 3);
-        b.set_cell_value(2, 7, 9);
+        b.set_cell_value(0, 0, 3);
+        b.set_cell_value(0, 2, 7);
+        b.set_cell_value(0, 4, 4);
+        b.set_cell_value(1, 1, 5);
+        b.set_cell_value(1, 6, 1);
+        b.set_cell_value(1, 8, 4);
+        b.set_cell_value(2, 2, 4);
+        b.set_cell_value(2, 3, 2);
+        b.set_cell_value(2, 4, 3);
+        b.set_cell_value(2, 6, 6);
+        b.set_cell_value(3, 0, 4);
         b.set_cell_value(3, 1, 2);
-        b.set_cell_value(3, 5, 9);
-        b.set_cell_value(3, 8, 1);
-        b.set_cell_value(4, 0, 6);
-        b.set_cell_value(4, 1, 4);
-        b.set_cell_value(4, 7, 5);
+        b.set_cell_value(3, 2, 9);
+        b.set_cell_value(3, 4, 5);
+        b.set_cell_value(3, 5, 3);
+        b.set_cell_value(4, 1, 6);
+        b.set_cell_value(4, 2, 3);
+        b.set_cell_value(4, 5, 2);
+        b.set_cell_value(4, 6, 4);
+        b.set_cell_value(4, 7, 8);
+        b.set_cell_value(1, 3, 7);
+        b.set_cell_value(5, 5, 9);
+        b.set_cell_value(6, 2, 5);
+        b.set_cell_value(6, 3, 9);
+        b.set_cell_value(6, 6, 8);
+        b.set_cell_value(6, 8, 6);
+        b.set_cell_value(7, 0, 1);
+        b.set_cell_value(7, 1, 4);
+        b.set_cell_value(7, 2, 6);
+        b.set_cell_value(7, 8, 2);
+        b.set_cell_value(8, 0, 2);
+        b.set_cell_value(8, 3, 6);
+        b.set_cell_value(8, 5, 7);
+        b.set_cell_value(8, 8, 3);
 
+
+        b.autofill_cells();
         b
     }
 
+    pub fn get_cells(&self) -> &[[Cell; 9]; 9] {
+        &self.cells
+    }
     pub fn set_cell_value(&mut self, x: usize, y: usize, value: u8) {
         self.cells[x][y].set_value(value);
 
         self.remove_value_from_row_and_col(x, y, value);
         self.remove_value_from_small_grid(x, y, value);
+        self.autofill_cells();
     }
 
     fn remove_value_from_row_and_col(&mut self, row: usize, col: usize, value: u8) {
@@ -50,15 +78,18 @@ impl Board {
         }
     }
 
-    pub fn get_cell_with_least_possible_values(&self) -> (usize, usize, u8) {
+    pub fn get_empty_cell_with_least_possible_values(&self) -> (usize, usize, u8) {
         let mut min = 10;
         let mut x = 10;
         let mut y = 10;
 
         for i in 0..9 {
             for j in 0..9 {
+                if !self.cells[i][j].is_empty() {
+                    continue;
+                }
                 let count = self.cells[i][j].get_possible_values_count();
-                if count > 1 && count < min {
+                if count < min {
                     min = count;
                     x = i;
                     y = j;
@@ -69,6 +100,24 @@ impl Board {
         (x, y, min)
     }
 
+    pub fn get_all_possible_values(&self, x: usize, y: usize) -> Vec<u8> {
+        self.cells[x][y].get_all_posible_values()
+    }
+
+    fn autofill_cells(&mut self) {
+        let mut change = true;
+        while change {
+            change = false;
+            for i in 0..9 {
+                for j in 0..9 {
+                    if self.cells[i][j].is_empty() && self.cells[i][j].get_possible_values_count() == 1 {
+                        self.cells[i][j].set_value(self.cells[i][j].get_all_posible_values()[0]);
+                        change = true;
+                    }
+                }
+            }
+        }
+    }
 
     pub fn print(&self) {
         for i in 0..9 {
@@ -83,7 +132,7 @@ impl Board {
                 println!("---------------------");
             }
         }
-        for i in 0..9 {
+        /*for i in 0..9 {
             for j in 0..9 {
                 print!("{:?} ", self.cells[i][j].possible_values());
                 if j == 2 || j == 5 {
@@ -94,14 +143,25 @@ impl Board {
             if i == 2 || i == 5 {
                 println!("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             }
-        }
+        }*/
     }
 
-    pub fn is_solved(&self) -> bool{
-        for r in self.cells{
-            for c in r{
-                if c.value() == &0{
-                    return false
+    pub fn is_solved(&self) -> bool {
+        for r in self.cells {
+            for c in r {
+                if c.is_empty() {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+
+    pub fn is_solvable(&self) -> bool {
+        for r in self.cells {
+            for _ in r {
+                if self.get_empty_cell_with_least_possible_values().2 == 0 {
+                    return false;
                 }
             }
         }

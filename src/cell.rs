@@ -48,4 +48,18 @@ impl Cell {
         }
         ret
     }
+
+    pub fn get_all_posible_values(&self) -> Vec<u8>{
+        let mut v:Vec<u8> = Vec::new();
+        for i in 0 .. 9{
+            if self.possible_values[i] != 0{
+                v.push(self.possible_values[i]);
+            }
+        }
+        v
+    }
+
+    pub fn is_empty(&self) -> bool{
+        self.value == 0
+    }
 }
