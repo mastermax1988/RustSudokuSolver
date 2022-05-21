@@ -7,7 +7,7 @@ fn main() {
     let mut boards: VecDeque<Board> = VecDeque::new();
     let board = Board::new();
     board.print();
-    boards.push_back(board.clone());
+    boards.push_back(board);
 
     solve(boards)
 }

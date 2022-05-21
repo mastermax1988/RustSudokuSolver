@@ -7,7 +7,7 @@ pub struct Board {
 
 impl Board {
     pub fn new() -> Board {
-        let mut cells = [[Cell::new(); 9]; 9];
+        let cells = [[Cell::new(); 9]; 9];
 
         let mut b = Board { cells };
         b.set_cell_value(0, 0, 3);
