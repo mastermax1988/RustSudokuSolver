@@ -1,10 +1,10 @@
-mod cell;
 mod board;
+mod cell;
 
-use std::collections::VecDeque;
 use board::Board;
+use std::collections::VecDeque;
 fn main() {
-    let mut boards:VecDeque<Board> = VecDeque::new();
+    let mut boards: VecDeque<Board> = VecDeque::new();
     let board = Board::new();
     board.print();
     boards.push_back(board.clone());
@@ -12,7 +12,7 @@ fn main() {
     solve(boards)
 }
 
-fn solve(mut boards: VecDeque<Board>){
+fn solve(mut boards: VecDeque<Board>) {
     loop {
         let b = match boards.pop_front() {
             Some(x) => x,
@@ -32,7 +32,7 @@ fn solve(mut boards: VecDeque<Board>){
             continue;
         }
         let best_cell = b.get_empty_cell_with_least_possible_values();
-        let values = b.get_cells()[best_cell.0][best_cell.1].get_all_posible_values();
+        let values = b.get_cells()[best_cell.0][best_cell.1].get_all_possible_values();
 
         for i in 0..best_cell.2 {
             let mut b_clone = b.clone();

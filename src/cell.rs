@@ -4,13 +4,15 @@ pub struct Cell {
     possible_values: [u8; 9],
 }
 
-
 impl Cell {
     pub fn new() -> Cell {
         let value = 0;
         let possible_values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-        Cell { value, possible_values }
+        Cell {
+            value,
+            possible_values,
+        }
     }
 
     pub fn value(&self) -> &u8 {
@@ -22,7 +24,7 @@ impl Cell {
     }
 
     pub fn set_value(&mut self, value: u8) {
-        if self.possible_values[(value-1) as usize] == 0 {
+        if self.possible_values[(value - 1) as usize] == 0 {
             panic!("Not solvable")
         }
         self.value = value;
@@ -52,17 +54,17 @@ impl Cell {
         ret
     }
 
-    pub fn get_all_posible_values(&self) -> Vec<u8>{
-        let mut v:Vec<u8> = Vec::new();
-        for i in 0 .. 9{
-            if self.possible_values[i] != 0{
+    pub fn get_all_possible_values(&self) -> Vec<u8> {
+        let mut v: Vec<u8> = Vec::new();
+        for i in 0..9 {
+            if self.possible_values[i] != 0 {
                 v.push(self.possible_values[i]);
             }
         }
         v
     }
 
-    pub fn is_empty(&self) -> bool{
+    pub fn is_empty(&self) -> bool {
         self.value == 0
     }
 }
