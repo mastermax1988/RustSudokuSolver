@@ -10,42 +10,56 @@ impl Board {
         let cells = [[Cell::new(); 9]; 9];
 
         let mut b = Board { cells };
-        b.set_cell_value(0, 0, 3);
-        b.set_cell_value(0, 2, 7);
-        b.set_cell_value(0, 4, 4);
-        b.set_cell_value(1, 1, 5);
-        b.set_cell_value(1, 6, 1);
-        b.set_cell_value(1, 8, 4);
-        b.set_cell_value(2, 2, 4);
-        b.set_cell_value(2, 3, 2);
-        b.set_cell_value(2, 4, 3);
-        b.set_cell_value(2, 6, 6);
-        b.set_cell_value(3, 0, 4);
-        b.set_cell_value(3, 1, 2);
-        b.set_cell_value(3, 2, 9);
-        b.set_cell_value(3, 4, 5);
-        b.set_cell_value(3, 5, 3);
-        b.set_cell_value(4, 1, 6);
-        b.set_cell_value(4, 2, 3);
-        b.set_cell_value(4, 5, 2);
-        b.set_cell_value(4, 6, 4);
-        b.set_cell_value(4, 7, 8);
-        b.set_cell_value(1, 3, 7);
-        b.set_cell_value(5, 5, 9);
-        b.set_cell_value(6, 2, 5);
-        b.set_cell_value(6, 3, 9);
-        b.set_cell_value(6, 6, 8);
-        b.set_cell_value(6, 8, 6);
-        b.set_cell_value(7, 0, 1);
-        b.set_cell_value(7, 1, 4);
-        /* b.set_cell_value(7, 2, 6);
-        b.set_cell_value(7, 8, 2);
-        b.set_cell_value(8, 0, 2);
-        b.set_cell_value(8, 3, 6);
-        b.set_cell_value(8, 5, 7);
-        b.set_cell_value(8, 8, 3);*/
+        b.set_cell_value_no_autofill(0, 0, 3);
+        b.set_cell_value_no_autofill(0, 2, 7);
+        b.set_cell_value_no_autofill(0, 4, 4);
+        b.set_cell_value_no_autofill(1, 1, 5);
+        b.set_cell_value_no_autofill(1, 6, 1);
+        b.set_cell_value_no_autofill(1, 8, 4);
+        b.set_cell_value_no_autofill(2, 2, 4);
+        b.set_cell_value_no_autofill(2, 3, 2);
+        b.set_cell_value_no_autofill(2, 4, 3);
+        b.set_cell_value_no_autofill(2, 6, 6);
+        b.set_cell_value_no_autofill(3, 0, 4);
+        b.set_cell_value_no_autofill(3, 1, 2);
+        b.set_cell_value_no_autofill(3, 2, 9);
+        b.set_cell_value_no_autofill(3, 4, 5);
+        b.set_cell_value_no_autofill(3, 5, 3);
+        b.set_cell_value_no_autofill(4, 1, 6);
+        b.set_cell_value_no_autofill(4, 2, 3);
+        b.set_cell_value_no_autofill(4, 5, 2);
+        b.set_cell_value_no_autofill(4, 6, 4);
+        b.set_cell_value_no_autofill(4, 7, 8);
+        b.set_cell_value_no_autofill(1, 3, 7);
+        b.set_cell_value_no_autofill(5, 5, 9);
+        b.set_cell_value_no_autofill(6, 2, 5);
+        b.set_cell_value_no_autofill(6, 3, 9);
+        b.set_cell_value_no_autofill(6, 6, 8);
+        b.set_cell_value_no_autofill(6, 8, 6);
+        b.set_cell_value_no_autofill(7, 0, 1);
+        b.set_cell_value_no_autofill(7, 1, 4);
+        b.set_cell_value_no_autofill(7, 2, 6);
+        b.set_cell_value_no_autofill(7, 8, 2);
+        b.set_cell_value_no_autofill(8, 0, 2);
+        b.set_cell_value_no_autofill(8, 3, 6);
+        b.set_cell_value_no_autofill(8, 5, 7);
+        b.set_cell_value_no_autofill(8, 8, 3);
 
-        b.autofill_cells();
+        b
+    }
+
+    pub fn new_from_vec(vec: Vec<u8>) -> Board {
+        let cells = [[Cell::new(); 9]; 9];
+
+        let mut b = Board { cells };
+
+        for i in 0..81 {
+            if vec[i] > 0 {
+                let x = i / 9;
+                let y = i - x * 9;
+                b.set_cell_value_no_autofill(x, y, vec[i]);
+            }
+        }
         b
     }
 
@@ -53,11 +67,14 @@ impl Board {
         &self.cells
     }
     pub fn set_cell_value(&mut self, x: usize, y: usize, value: u8) {
-        self.cells[x][y].set_value(value);
+        self.set_cell_value_no_autofill(x, y, value);
+        self.autofill_cells();
+    }
 
+    pub fn set_cell_value_no_autofill(&mut self, x: usize, y: usize, value: u8) {
+        self.cells[x][y].set_value(value);
         self.remove_value_from_row_and_col(x, y, value);
         self.remove_value_from_small_grid(x, y, value);
-        self.autofill_cells();
     }
 
     fn remove_value_from_row_and_col(&mut self, row: usize, col: usize, value: u8) {
@@ -103,7 +120,7 @@ impl Board {
         self.cells[x][y].get_all_possible_values()
     }
 
-    fn autofill_cells(&mut self) {
+    pub fn autofill_cells(&mut self) {
         for i in 0..9 {
             for j in 0..9 {
                 if self.cells[i][j].is_empty() && self.cells[i][j].get_possible_values_count() == 1
@@ -128,6 +145,7 @@ impl Board {
                 println!("---------------------");
             }
         }
+        println!();
         /*for i in 0..9 {
             for j in 0..9 {
                 print!("{:?} ", self.cells[i][j].possible_values());
