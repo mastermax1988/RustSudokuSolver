@@ -22,6 +22,9 @@ impl Cell {
     }
 
     pub fn set_value(&mut self, value: u8) {
+        if self.possible_values[(value-1) as usize] == 0 {
+            panic!("Not solvable")
+        }
         self.value = value;
         for i in 0..9 {
             if i + 1 == value {

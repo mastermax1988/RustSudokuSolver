@@ -38,12 +38,12 @@ impl Board {
         b.set_cell_value(6, 8, 6);
         b.set_cell_value(7, 0, 1);
         b.set_cell_value(7, 1, 4);
-        b.set_cell_value(7, 2, 6);
+       /* b.set_cell_value(7, 2, 6);
         b.set_cell_value(7, 8, 2);
         b.set_cell_value(8, 0, 2);
         b.set_cell_value(8, 3, 6);
         b.set_cell_value(8, 5, 7);
-        b.set_cell_value(8, 8, 3);
+        b.set_cell_value(8, 8, 3);*/
 
 
         b.autofill_cells();
@@ -105,15 +105,11 @@ impl Board {
     }
 
     fn autofill_cells(&mut self) {
-        let mut change = true;
-        while change {
-            change = false;
-            for i in 0..9 {
-                for j in 0..9 {
-                    if self.cells[i][j].is_empty() && self.cells[i][j].get_possible_values_count() == 1 {
-                        self.cells[i][j].set_value(self.cells[i][j].get_all_posible_values()[0]);
-                        change = true;
-                    }
+        for i in 0..9 {
+            for j in 0..9 {
+                if self.cells[i][j].is_empty() && self.cells[i][j].get_possible_values_count() == 1 {
+                    self.set_cell_value(i, j, self.cells[i][j].get_all_posible_values()[0]);
+                    return;
                 }
             }
         }
