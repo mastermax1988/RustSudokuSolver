@@ -57,7 +57,7 @@ impl Board {
             if *v > 0 {
                 let x = i / 9;
                 let y = i - x * 9;
-                b.set_cell_value_no_autofill(x, y, vec[i]);
+                b.set_cell_value_no_autofill(x, y, *v);
             }
         }
 
