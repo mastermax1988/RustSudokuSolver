@@ -53,13 +53,14 @@ impl Board {
 
         let mut b = Board { cells };
 
-        for i in 0..81 {
-            if vec[i] > 0 {
+        for (i, v) in vec.iter().enumerate() {
+            if *v > 0 {
                 let x = i / 9;
                 let y = i - x * 9;
                 b.set_cell_value_no_autofill(x, y, vec[i]);
             }
         }
+
         b
     }
 
