@@ -19,12 +19,8 @@ impl Cell {
         &self.value
     }
 
-    pub fn possible_values(&self) -> &[u8; 9] {
-        &self.possible_values
-    }
-
     pub fn set_value(&mut self, value: u8) {
-        if self.possible_values[(value - 1) as usize] == 0 {
+        if value > 0 && self.possible_values[(value - 1) as usize] == 0 {
             panic!("Not solvable")
         }
         self.value = value;

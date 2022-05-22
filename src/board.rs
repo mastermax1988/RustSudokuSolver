@@ -1,15 +1,18 @@
 use crate::cell::Cell;
+use colored::*;
 
 #[derive(Debug, Clone)]
 pub struct Board {
     cells: [[Cell; 9]; 9],
+    fix_cells: [[Cell; 9]; 9],
 }
 
 impl Board {
     pub fn new() -> Board {
         let cells = [[Cell::new(); 9]; 9];
 
-        let mut b = Board { cells };
+        let fix_cells = [[Cell::new(); 9]; 9];
+        let mut b = Board { cells, fix_cells };
         b.set_cell_value_no_autofill(0, 0, 3);
         b.set_cell_value_no_autofill(0, 2, 7);
         b.set_cell_value_no_autofill(0, 4, 4);
@@ -41,9 +44,9 @@ impl Board {
         b.set_cell_value_no_autofill(7, 2, 6);
         b.set_cell_value_no_autofill(7, 8, 2);
         b.set_cell_value_no_autofill(8, 0, 2);
-        b.set_cell_value_no_autofill(8, 3, 6);
+        /*b.set_cell_value_no_autofill(8, 3, 6);
         b.set_cell_value_no_autofill(8, 5, 7);
-        b.set_cell_value_no_autofill(8, 8, 3);
+        b.set_cell_value_no_autofill(8, 8, 3);*/
 
         b
     }
@@ -51,7 +54,8 @@ impl Board {
     pub fn new_from_vec(vec: Vec<u8>) -> Board {
         let cells = [[Cell::new(); 9]; 9];
 
-        let mut b = Board { cells };
+        let fix_cells = [[Cell::new(); 9]; 9];
+        let mut b = Board { cells, fix_cells };
 
         for (i, v) in vec.iter().enumerate() {
             if *v > 0 {
@@ -62,6 +66,14 @@ impl Board {
         }
 
         b
+    }
+
+    pub fn set_fix_cells(&mut self) {
+        for (i, r) in self.cells.iter().enumerate() {
+            for (j, c) in r.iter().enumerate() {
+                self.fix_cells[i][j].set_value(*c.value());
+            }
+        }
     }
 
     pub fn get_cells(&self) -> &[[Cell; 9]; 9] {
@@ -117,10 +129,6 @@ impl Board {
         (x, y, min)
     }
 
-    pub fn get_all_possible_values(&self, x: usize, y: usize) -> Vec<u8> {
-        self.cells[x][y].get_all_possible_values()
-    }
-
     pub fn autofill_cells(&mut self) {
         for i in 0..9 {
             for j in 0..9 {
@@ -136,7 +144,7 @@ impl Board {
     pub fn print(&self) {
         for i in 0..9 {
             for j in 0..9 {
-                print!("{} ", self.cells[i][j].value());
+                print!("{} ", self.apply_color(i, j, self.cells[i][j].value()));
                 if j == 2 || j == 5 {
                     print!("| ");
                 }
@@ -181,5 +189,23 @@ impl Board {
             }
         }
         true
+    }
+    fn apply_color(&self, x: usize, y: usize, value: &u8) -> ColoredString {
+        if *self.fix_cells[x][y].value() == 0 {
+            return match value {
+                0 => value.to_string().red(),
+                1 => value.to_string().green(),
+                2 => value.to_string().yellow(),
+                3 => value.to_string().blue(),
+                4 => value.to_string().magenta(),
+                5 => value.to_string().cyan(),
+                6 => value.to_string().bright_red(),
+                7 => value.to_string().bright_yellow(),
+                8 => value.to_string().bright_blue(),
+                9 => value.to_string().bright_magenta(),
+                _ => String::from(value.to_string().as_str()).white(),
+            };
+        }
+        value.to_string().white()
     }
 }
